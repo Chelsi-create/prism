@@ -4,8 +4,6 @@
 
 We propose MDocAgent, a novel multi-modal multi-agent framework for document question answering. It integrates text and image retrieval through five specialized agents — general, critical, text, image, and summarizing agents — enabling collaborative reasoning across modalities. Experiments on five benchmarks show a 12.1% improvement over state-of-the-art methods, demonstrating its effectiveness in handling complex real-world documents.
 
-![main_fig](media/main_fig.jpg)
-
 ## Requirements
 
 1. Clone this repository and navigate to MDocAgent folder
