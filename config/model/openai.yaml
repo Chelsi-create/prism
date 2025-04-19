@@ -1,0 +1,8 @@
+defaults:
+  - base
+  - _self_
+
+model: gpt-4.1
+api_key: # YOUR_OPENAI_API_KEY
+module_name: models.openai
+class_name: MyOpenAI
