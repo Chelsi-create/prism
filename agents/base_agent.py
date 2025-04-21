@@ -15,10 +15,16 @@ class Agent:
         if model is not None:
             self.model:BaseModel = model
         else:
-            module = importlib.import_module(self.config.model.module_name)
-            model_class = getattr(module, self.config.model.class_name)
-            print("Create model: ", self.config.model.class_name)
-            self.model = model_class(self.config.model)
+            try:
+                module = importlib.import_module(self.config.model.module_name)
+                model_class = getattr(module, self.config.model.class_name)
+                print("Create model: ", self.config.model.class_name)
+                self.model = model_class(self.config.model)
+            except Exception:
+                module = importlib.import_module(self.config.agent.module_name)
+                model_class = getattr(module, self.config.agent.class_name)
+                print("Create model: ", self.config.agent.class_name)
+                self.model = model_class(self.config.agent)
     
     def clean_messages(self):
         self.messages = None

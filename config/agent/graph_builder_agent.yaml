@@ -1,0 +1,8 @@
+extract_path: "./tmp/MMLongBench"
+
+# Used to name the output file: "<dataset_name>_page_graph.gpickle"
+dataset_name: "MMLongBench"
+
+# Optional: sentence-transformer model & threshold
+embedding_model_name: "sentence-transformers/all-mpnet-base-v2"
+semantic_edge_threshold: 0.75

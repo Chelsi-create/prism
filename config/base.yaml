@@ -39,3 +39,10 @@ eval_agent: # Used for result evaluation
   ans_key: ans_${run-name}
   agent: base
   model: openai
+
+graph_builder:
+  class_path: "agents.graph_builder_agent.GraphBuilderAgent"
+  extract_path: "/absolute/path/to/MMLongBench"        # or leave blank and override on CLI
+  model: "sentence-transformers/all-mpnet-base-v2"
+  module_name: "sentence_transformers"
+  semantic_edge_threshold: 0.75
