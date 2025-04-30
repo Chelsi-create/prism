@@ -1,48 +1,65 @@
-# The structure of retrieval and multi_agents can be modified in this yaml file
-# agent and model configurations should be modified in their respective config folders
-
 defaults:
-  - retrieval: image # Change this to text/image when configuring retrieval
   - _self_
 
 run-name: mmlb-MDA # Experiment name
 
 dataset:
-  top_k: 1 # Top-k results used during inference
+  top_k: 1
+  sample_path: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples_retrieval_dag.json"
+  result_dir: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples_retrieval_dag2.json"
 
 retrieval:
-  top_k: 10 # Top-k results returned during retrieval
-  cuda_visible_devices: '0'
-  use_faiss: True
+  doc_key: doc_id
+  cuda_visible_devices: '1'
+  top_k: 10
+
+  text_retrieval:
+    model_type: text
+    model_name: ColbertRetrieval
+    class_path: retrieval.text_retrieval.ColbertRetrieval
+    top_k: 10
+    r_text_key: text-top-10-question
+    r_text_index_key: text-index-path-question
+    text_question_key: question
+
+  image_retrieval:
+    model_type: image
+    model_name: ColpaliRetrieval
+    class_path: retrieval.image_retrieval.ColpaliRetrieval
+    top_k: 10
+    r_image_key: image-top-10-question
+    batch_size: 2
+    embed_dir: ./tmp/ColpaliRetrieval/question
+    image_question_key: question
 
 mdoc_agent:
-  cuda_visible_devices: '0, 1'
-  truncate_len: null # Used for debugging; set to null for normal use
-  save_freq: 10 # Frequency of saving checkpoints
-  ans_key: ans_${run-name} # Key name for generated answers during prediction
-  save_message: false # Set to true to record responses from all agents
+  cuda_visible_devices: '0,1'
+  truncate_len: null
+  save_freq: 10
+  ans_key: ans_${run-name}
+  save_message: false
 
   agents:
-    - agent: image_agent # Configures prompt and controls whether to use text/image as reference material
-      model: qwen2vl # Configures the model to use
+    - agent: image_agent
+      model: qwen2vl
     - agent: text_agent
       model: llama31
     - agent: general_agent
       model: qwen2vl
-  
+
   sum_agent:
-    agent: sum_agent # Responsible for summarizing answers from all agents
+    agent: sum_agent
     model: qwen2vl
 
-eval_agent: # Used for result evaluation
-  truncate_len: null # Used for debugging; set to null for normal use
+eval_agent:
+  truncate_len: null
   ans_key: ans_${run-name}
   agent: base
   model: openai
 
 graph_builder:
   class_path: "agents.graph_builder_agent.GraphBuilderAgent"
-  extract_path: "/absolute/path/to/MMLongBench"        # or leave blank and override on CLI
+  extract_path: "/absolute/path/to/MMLongBench"
   model: "sentence-transformers/all-mpnet-base-v2"
   module_name: "sentence_transformers"
   semantic_edge_threshold: 0.75

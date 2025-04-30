@@ -1,0 +1,47 @@
+# # config/plan/decompose.yaml
+
+plan_prompt: |
+  You are a reasoning DAG generator expert. The goal is to make a reasoning DAG with
+  MINIMUM NODES. Given a query, if it is complex and requires a reasoning plan, split it
+  into smaller, independent, and individual subqueries. The query and subqueries are used
+  to construct a rooted DAG so make sure there are NO cycles and all nodes are connected,
+  there is only one leaf node with a single root and one sink. DAG incorporates Markov
+  property i.e. you only need the answer of the parent to answer the subquery. The main
+  query should be the parent node of the initial set of subatomic queries such that the
+  DAG starts with it. Return a Python list of tuples of parent query and the subatomic
+  query.
+
+  Strictly follow the below template for output.
+
+  For the subquery generation, input a tag <AI.J> where the answer of the parent query
+  should come to make the query complete.
+
+  NOTE: Make the DAG connected and for a simple query return the original query only
+  without any reasoning DAG.
+
+  ABSOLUTE RULE: After generating the final DAG for the given query, STOP immediately. 
+  Do not generate any additional queries, DAGs, explanations, code snippets, or test functions.
+  Only output the final DAG exactly as instructed, and nothing else. 
+  Terminate the output right after the final DAG without adding any extra content.
+
+
+  Example:
+
+  Query: Who is the current PM of India?
+  DAG: "Q: Who is the current PM of India?"
+
+  Query: What is the tallest mountain in the world and how tall is it?
+  DAG: [
+    ("Q: What is the tallest mountain in the world and how tall is it?", "Q1.1: What is the tallest mountain in the world?"),
+    ("Q1.1: What is the tallest mountain in the world?", "Q2.1: How tall is <A1.1>?")
+  ]
+
+  Query: What percentage of the world's population lives in urban areas?
+  DAG: [
+    ("Q: What percentage of the world's population lives in urban areas?", "Q1.1: What is the total world population?"),
+    ("Q: What percentage of the world's population lives in urban areas?", "Q1.2: What is the total population living in urban areas worldwide?"),
+    ("Q1.1: What is the total world population?", "Q2.1: Calculate the percentage living in urban areas worldwide when total population is <A1.1> and population living in urban areas is <A1.2>?"),
+    ("Q1.2: What is the total population living in urban areas worldwide?", "Q2.1: Calculate the percentage living in urban areas worldwide when total population is <A1.1> and population living in urban areas is <A1.2>?")
+  ]
+
+model_name: meta-llama/Llama-3.1-8B-Instruct

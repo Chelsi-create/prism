@@ -9,7 +9,7 @@ GRAPH_PATH    = "tmp/MMLongBench/MMLongBench_page_graph.gpickle"
 SAMPLE_IN     = "data/MMLongBench/samples.json"
 SAMPLE_OUT    = "data/MMLongBench/samples_retrieval_graph.json"
 EMBED_MODEL   = "sentence-transformers/all-mpnet-base-v2"
-TOP_K         = 20
+TOP_K         = 10
 
 def main():
     # 1) load graph
@@ -45,9 +45,9 @@ def main():
 
         # 6) extend the sample record
         rec = sample.copy()
-        rec["graph-top-20-question"]         = page_idxs
-        rec["graph-top-20-question_score"]   = top_scores
-        rec["graph-top-20-question_node"]    = top_nodes
+        rec["graph-top-10-question"]         = page_idxs
+        rec["graph-top-10-question_score"]   = top_scores
+        rec["graph-top-10-question_node"]    = top_nodes
 
         output.append(rec)
 

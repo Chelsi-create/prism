@@ -1,6 +1,7 @@
 import os
 import json
 from tqdm import tqdm
+
 from ragatouille import RAGPretrainedModel
 
 from retrieval.base_retrieval import BaseRetrieval
@@ -83,3 +84,37 @@ class ColbertRetrieval(BaseRetrieval):
             sample[self.config.r_text_key+"_score"] = top_page_scores
         path = dataset.dump_data(samples, use_retreival=True)
         print(f"Save retrieval results at {path}.")
+
+    
+    def find_top_k_for_subquery(self, sample, subquery: str, top_k: int, page_id_key: str):
+        index_path = sample.get(self.config.r_text_index_key, "")
+        print(index_path)
+        if not os.path.exists(sample[self.config.r_text_index_key]+"/pid_docid_map.json"):
+            print(f"Index not found for {sample[self.config.r_text_index_key]}/pid_docid_map.json.")
+            return [], []
+
+        with open(index_path + "/pid_docid_map.json", 'r') as f:
+            pid_map_data = json.load(f)
+
+        unique_values = list(dict.fromkeys(pid_map_data.values()))
+        value_to_rank = {val: idx for idx, val in enumerate(unique_values)}
+        pid_map = {int(key): value_to_rank[value] for key, value in pid_map_data.items()}
+
+        RAG = RAGPretrainedModel.from_index(index_path)
+        results = RAG.search(subquery, k=len(pid_map))
+
+        top_page_indices = [pid_map[page['passage_id']] for page in results]
+        top_page_scores = [page['score'] for page in results]
+
+        if page_id_key in sample:
+            page_id_list = sample[page_id_key]
+            assert isinstance(page_id_list, list)
+            filtered_indices = []
+            filtered_scores = []
+            for idx, score in zip(top_page_indices, top_page_scores):
+                if idx in page_id_list:
+                    filtered_indices.append(idx)
+                    filtered_scores.append(score)
+            return filtered_indices[:top_k], filtered_scores[:top_k]
+
+        return top_page_indices[:top_k], top_page_scores[:top_k]

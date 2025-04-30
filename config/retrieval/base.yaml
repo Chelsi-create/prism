@@ -1,13 +1,44 @@
-model_type: haha
-model_name: empty
-class_path: retrieval.${retrieval.model_type}_retrieval.${retrieval.model_name}
+# model_type: haha
+# model_name: empty
+# class_path: retrieval.${retrieval.model_type}_retrieval.${retrieval.model_name}
 
-top_k: 10
-doc_key: doc_id
-text_question_key: question
-image_question_key: question
-r_text_key: text-top-${retrieval.top_k}-${retrieval.text_question_key}
-r_image_key: image-top-${retrieval.top_k}-${retrieval.image_question_key}
-r_mix_key: mix-top-${retrieval.top_k}-${retrieval.mix_question_key}
-r_text_index_key: text-index-path-${retrieval.text_question_key}
-cuda_visible_devices: '0'
+# top_k: 10
+# doc_key: doc_id
+# text_question_key: question
+# image_question_key: question
+# mix_question_key: question_node
+# r_text_key: text-top-${retrieval.top_k}-${retrieval.text_question_key}
+# r_image_key: image-top-${retrieval.top_k}-${retrieval.image_question_key}
+# r_mix_key: graph-top-${retrieval.top_k}-${retrieval.mix_question_key}
+# r_text_index_key: text-index-path-${retrieval.text_question_key}
+# cuda_visible_devices: '0'
+
+retrieval:
+  text_retrieval:
+    model_type: text
+    model_name: ColbertRetrieval
+    class_path: retrieval.text_retrieval.ColbertRetrieval
+    top_k: 10
+    text_question_key: question
+
+  image_retrieval:
+    model_type: image
+    model_name: ColpaliRetrieval
+    class_path: retrieval.image_retrieval.ColpaliRetrieval
+    top_k: 10
+    r_image_key: image-top-10-question
+    batch_size: 2
+    embed_dir: ./tmp/ColpaliRetrieval/question
+    image_question_key: question
+
+  doc_key: doc_id
+  cuda_visible_devices: '1'
+  text_question_key: question
+  r_text_index_key: text-index-path-${retrieval.text_question_key}
+  top_k: 10
+  doc_key: doc_id
+  image_question_key: question
+  mix_question_key: question_node
+  r_text_key: text-top-${retrieval.top_k}-${retrieval.text_question_key}
+  r_image_key: image-top-${retrieval.top_k}-${retrieval.image_question_key}
+  r_mix_key: graph-top-${retrieval.top_k}-${retrieval.mix_question_key}

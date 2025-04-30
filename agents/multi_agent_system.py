@@ -54,6 +54,7 @@ class MultiAgentSystem:
         while batch := list(islice(it, batch_size)):
             yield batch
 
+    ## 
     def predict_dataset(self, dataset:BaseDataset, resume_path = None):
         samples = dataset.load_data(use_retreival=True)
         if resume_path:
@@ -87,6 +88,48 @@ class MultiAgentSystem:
                 print(f"Save {sample_no} results to {path}.")
         path = dataset.dump_reults(samples)
         print(f"Save final results to {path}.")
+
+    def predict_query(self, sample, subquery: str, subquery_id: str, dataset: BaseDataset):
+        print("Implementing predict query method")
+        subquery_question, texts, images = dataset.load_subquery_retrieval_data(sample, subquery_id)
+
+        try:
+            final_ans, final_messages = self.predict(subquery, texts, images)
+        except RuntimeError as e:
+            print(e)
+            if "out of memory" in str(e):
+                torch.cuda.empty_cache()
+            final_ans, final_messages = None, None
+
+        torch.cuda.empty_cache()
+        self.clean_messages()
+
+        return final_ans, final_messages
+    
+    def predict_final_ans_context(self, sample, sub_ans, reasoning_dag, dataset: BaseDataset):
+        question, texts, images = dataset.load_sample_retrieval_data(sample)
+
+        prompt = (
+            f"Original Question: {question}\n"
+            f"Subquery: {reasoning_dag}\n"
+            f"Subquery Answers: {sub_ans}"
+        )
+
+        try:
+            final_ans, final_messages = self.predict(prompt, texts, images)
+            print(final_ans)
+
+        except RuntimeError as e:
+            print(e)
+            if "out of memory" in str(e):
+                torch.cuda.empty_cache()
+            final_ans, final_messages = None, None
+
+        torch.cuda.empty_cache()
+        self.clean_messages()
+
+        return final_ans, final_messages
+
 
     # def predict_dataset(self, dataset:BaseDataset, resume_path=None):
     #     samples = dataset.load_data(use_retreival=True)

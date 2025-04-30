@@ -109,3 +109,32 @@ class ColpaliRetrieval(BaseRetrieval):
         else:
             document_embeds = self.prepare(dataset)
         return document_embeds
+    
+
+    def find_top_k_for_subquery(self, sample, subquery: str, document_embed, top_k: int, page_id_key: str):
+        if document_embed is None:
+            print(f"No document embedding found for {sample[self.config.doc_key]}.")
+            return [], []
+
+        batch_queries = process_queries(self.processor, [subquery], Image.new("RGB", (448, 448), (255, 255, 255))).to(self.model.device)
+        with torch.no_grad():
+            query_embed = self.model(**batch_queries)
+
+        retriever_evaluator = CustomEvaluator(is_multi_vector=True)
+        scores = retriever_evaluator.evaluate(query_embed, document_embed)
+
+        page_id_list = sample.get(page_id_key, None)
+        if page_id_list:
+            scores_tensor = torch.tensor(scores)
+            mask = torch.zeros_like(scores_tensor, dtype=torch.bool)
+            for idx in page_id_list:
+                mask[0, idx] = True
+            masked_scores = torch.where(mask, scores_tensor, torch.full_like(scores_tensor, float('-inf')))
+            top_page = torch.topk(masked_scores, min(top_k, len(page_id_list)), dim=-1)
+        else:
+            top_page = torch.topk(torch.tensor(scores), min(top_k, len(scores[0])), dim=-1)
+
+        top_page_scores = top_page.values.tolist()[0] if top_page is not None else []
+        top_page_indices = top_page.indices.tolist()[0] if top_page is not None else []
+
+        return top_page_indices, top_page_scores

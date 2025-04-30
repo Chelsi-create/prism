@@ -6,6 +6,7 @@ import os
 from agents.multi_agent_system import MultiAgentSystem
 from agents.base_agent import Agent
 from mydatasets.base_dataset import BaseDataset
+from agents.dag_controller import DAGController
 
 class MDocAgent(MultiAgentSystem):
     def __init__(self, config):
