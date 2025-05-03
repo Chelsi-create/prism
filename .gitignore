@@ -5,3 +5,4 @@ __pycache__
 /results
 /tmp
 .ragatouille
+sample_retrieval_dag_final.json

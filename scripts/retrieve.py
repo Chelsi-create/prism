@@ -80,6 +80,7 @@ def main(cfg):
     
     # ------------ Retrieve per Sub-Query ------------
     print("-------------Retrieving TopK for each sub-query in reasoning_dag-------------")
+    updated_samples = []
     for sample in tqdm(samples):
         subquery_to_answer = {}
         if "reasoning_dag" not in sample:
@@ -147,8 +148,9 @@ def main(cfg):
         sample["ans2"] = ans2
         print(ans2)
 
-        with open("sample_retrieval_dag3.jsonl", "a") as f:
-            f.write(json.dumps(sample) + "\n")
+        updated_samples.append(sample)
+        with open("sample_retrieval_dag_final.json", "w") as f:
+            json.dump(updated_samples, f, indent=2)
 
     # Mdocagent = question + texts + images
     # (question+subquery+answers, texts ,images)
@@ -172,6 +174,15 @@ def replace_previous_answers(subquery: str, subquery_to_answer: dict):
         if placeholder in updated_query:
             updated_query = updated_query.replace(placeholder, ans)
     return updated_query
+
+# get the evaluation results
+# go through more papers 
+# get the experiment running at psu lab
+# meeting notes
+# implement the algorithm (today)
+# batch inference (later)
+# tower research start prep
+
 
 if __name__ == "__main__":
     main()

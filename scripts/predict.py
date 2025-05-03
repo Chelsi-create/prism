@@ -22,7 +22,7 @@ def main(cfg):
     
     dataset = BaseDataset(cfg.dataset)
     mdoc_agent = MDocAgent(cfg.mdoc_agent)
-    mdoc_agent.predict_dataset(dataset)
+    mdoc_agent.predict_dataset_con(dataset)
     
 if __name__ == "__main__":
     main()

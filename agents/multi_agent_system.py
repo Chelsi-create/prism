@@ -54,6 +54,46 @@ class MultiAgentSystem:
         while batch := list(islice(it, batch_size)):
             yield batch
 
+
+    def predict_dataset_con(self, dataset:BaseDataset, resume_path = None):
+        samples = dataset.load_data(use_retreival=True)
+        if resume_path:
+            assert os.path.exists(resume_path)
+            with open(resume_path, 'r') as f:
+                samples = json.load(f)
+        if self.config.truncate_len:
+            samples = samples[:self.config.truncate_len]
+            
+        sample_no = 0
+        for sample in tqdm(samples):
+            if resume_path and self.config.ans_key in sample:
+                continue
+            question, texts, images = dataset.load_sample_retrieval_data(sample)
+
+            try:
+                final_ans, final_messages, text_reading_notes, image_reading_notes = self.predict2(question, texts, images)
+            except RuntimeError as e:
+                print(e)
+                if "out of memory" in str(e):
+                    torch.cuda.empty_cache()
+                final_ans, final_messages = None, None
+                text_reading_notes, image_reading_notes = {}, {}
+            sample[self.config.ans_key] = final_ans
+            sample["text_reading_notes"] = text_reading_notes
+            sample["image_reading_notes"] = image_reading_notes
+
+            if self.config.save_message:
+                sample[self.config.ans_key+"_message"] = final_messages
+            torch.cuda.empty_cache()
+            self.clean_messages()
+            
+            sample_no += 1
+            if sample_no % self.config.save_freq == 0:
+                path = dataset.dump_reults(samples)
+                print(f"Save {sample_no} results to {path}.")
+        path = dataset.dump_reults(samples)
+        print(f"Save final results to {path}.")
+
     ## 
     def predict_dataset(self, dataset:BaseDataset, resume_path = None):
         samples = dataset.load_data(use_retreival=True)

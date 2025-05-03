@@ -93,11 +93,11 @@ class BaseDataset():
         subquery_info = retrieval_info.get(subquery_id, {})
 
         if "text" in subquery_info:
-            for idx in subquery_info["text"][:self.config.top_k]:
+            for idx in subquery_info["text"]:
                 texts.append(content_list[idx].txt.replace("\n", ""))
 
         if "image" in subquery_info:
-            for idx in subquery_info["image"][:self.config.top_k]:
+            for idx in subquery_info["image"]:
                 images.append(content_list[idx].image_path)
 
         subquery_question = None
@@ -120,7 +120,7 @@ class BaseDataset():
         texts = []
         images = []
 
-        print(self.config.r_text_key)
+        # print(self.config.r_text_key)
         if self.config.use_mix:
             if self.config.r_mix_key in sample:
                 for page in sample[self.config.r_mix_key][:self.config.top_k]:
@@ -131,10 +131,10 @@ class BaseDataset():
                         texts.append(content_list[page].txt.replace("\n", ""))
         else:
             if self.config.r_text_key in sample:
-                for page in sample[self.config.r_text_key][:self.config.top_k]:
+                for page in sample[self.config.r_text_key]:
                     texts.append(content_list[page].txt.replace("\n", ""))
             if self.config.r_image_key in sample:
-                for page in sample[self.config.r_image_key][:self.config.top_k]:
+                for page in sample[self.config.r_image_key]:
                     origin_image_path = content_list[page].image_path
                     images.append(origin_image_path)
 

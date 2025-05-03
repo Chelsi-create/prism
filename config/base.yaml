@@ -10,7 +10,7 @@ dataset:
 
 retrieval:
   doc_key: doc_id
-  cuda_visible_devices: '1'
+  cuda_visible_devices: '0'
   top_k: 10
 
   text_retrieval:
@@ -33,9 +33,9 @@ retrieval:
     image_question_key: question
 
 mdoc_agent:
-  cuda_visible_devices: '0,1'
+  cuda_visible_devices: '0'
   truncate_len: null
-  save_freq: 10
+  save_freq: 1
   ans_key: ans_${run-name}
   save_message: false
 
