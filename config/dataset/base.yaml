@@ -15,4 +15,4 @@ result_dir: ./results/${dataset.name}/${run-name}
 extract_path: ./tmp/${dataset.name}
 document_path: ./data/${dataset.name}/documents
 sample_path: ${dataset.data_dir}/samples_retrieval_dag.json
-sample_with_retrieval_path: ${dataset.data_dir}/con_predict_note_result.json
+sample_with_retrieval_path: ${dataset.data_dir}/sample_retrieval_dag_final.json

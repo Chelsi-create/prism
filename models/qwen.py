@@ -8,8 +8,16 @@ class Qwen2VL(BaseModel):
         super().__init__(config)
         max_pixels = 2048*28*28
         self.model = Qwen2VLForConditionalGeneration.from_pretrained(
-            self.config.model_id, torch_dtype="auto", device_map="balanced_low_0"
+            self.config.model_id, torch_dtype="auto", device_map="auto"
         )
+
+        for name, param in self.model.named_parameters():
+            if param.device.type == "cuda":
+                print(f"Model parameter '{name}' is on GPU: {param.device}")
+                break
+        else:
+            print("Model is not on GPU.")
+
         self.processor = AutoProcessor.from_pretrained(self.config.model_id) # , max_pixels=max_pixels
         self.create_ask_message = lambda question: {
             "role": "user",
@@ -23,7 +31,7 @@ class Qwen2VL(BaseModel):
                 {"type": "text", "text": ans},
             ],
         }
-        
+
     def create_text_message(self, texts, question):
         content = []
         for text in texts:
@@ -102,7 +110,7 @@ class Qwen2_5VL(Qwen2VL):
     def __init__(self, config):
         self.config = config
         self.model = Qwen2_5_VLForConditionalGeneration.from_pretrained(
-            self.config.model_id, torch_dtype="auto", device_map="balanced_low_0"
+            self.config.model_id, torch_dtype="auto", device_map="auto"
         )
         self.processor = AutoProcessor.from_pretrained(self.config.model_id)
         self.create_ask_message = lambda question: {

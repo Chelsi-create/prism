@@ -93,11 +93,11 @@ class BaseDataset():
         subquery_info = retrieval_info.get(subquery_id, {})
 
         if "text" in subquery_info:
-            for idx in subquery_info["text"]:
+            for idx in subquery_info["text"][:2]:
                 texts.append(content_list[idx].txt.replace("\n", ""))
 
         if "image" in subquery_info:
-            for idx in subquery_info["image"]:
+            for idx in subquery_info["image"][:2]:
                 images.append(content_list[idx].image_path)
 
         subquery_question = None
@@ -131,10 +131,10 @@ class BaseDataset():
                         texts.append(content_list[page].txt.replace("\n", ""))
         else:
             if self.config.r_text_key in sample:
-                for page in sample[self.config.r_text_key]:
+                for page in sample[self.config.r_text_key][:1]:
                     texts.append(content_list[page].txt.replace("\n", ""))
             if self.config.r_image_key in sample:
-                for page in sample[self.config.r_image_key]:
+                for page in sample[self.config.r_image_key][:1]:
                     origin_image_path = content_list[page].image_path
                     images.append(origin_image_path)
 

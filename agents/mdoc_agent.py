@@ -93,22 +93,22 @@ class MDocAgent(MultiAgentSystem):
 
         general_agent = self.agents[-1]
         device_general = get_model_device(general_agent)
-        texts_general = move_to_device(texts, device_general)
-        images_general = move_to_device(images, device_general)
+        # texts_general = move_to_device(texts, device_general)
+        # images_general = move_to_device(images, device_general)
         # general_response, messages = general_agent.predict(question, texts_general, images_general, with_sys_prompt=True)
 
-        critical_info = general_agent.self_reflect(prompt=general_agent.config.agent.critical_prompt, add_to_message=False)
-        start_index = critical_info.find('{') 
-        end_index = critical_info.find('}') + 1 
-        critical_info = critical_info[start_index:end_index]
-        text_reflection = ""
-        image_reflection = ""
-        try:
-            critical_info = json.loads(critical_info)
-            text_reflection = critical_info.get("text", "")
-            image_reflection = critical_info.get("image", "")
-        except Exception as e:
-            print("Reflection parsing error:", e)
+        # critical_info = general_agent.self_reflect(prompt=general_agent.config.agent.critical_prompt, add_to_message=False)
+        # start_index = critical_info.find('{') 
+        # end_index = critical_info.find('}') + 1 
+        # critical_info = critical_info[start_index:end_index]
+        # text_reflection = ""
+        # image_reflection = ""
+        # try:
+        #     critical_info = json.loads(critical_info)
+        #     text_reflection = critical_info.get("text", "")
+        #     image_reflection = critical_info.get("image", "")
+        # except Exception as e:
+        #     print("Reflection parsing error:", e)
 
         text_agent = self.agents[1]
         device_text = get_model_device(text_agent)

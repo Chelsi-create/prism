@@ -5,12 +5,12 @@ run-name: mmlb-MDA # Experiment name
 
 dataset:
   top_k: 1
-  sample_path: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples_retrieval_dag.json"
-  result_dir: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples_retrieval_dag2.json"
+  # sample_path: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples.json"
+  # result_dir: "/nfs/hpc/share/jainc/doc_agent/MDocAgent/data/MMLongBench/samples_retrieval_dag2.json"
 
 retrieval:
   doc_key: doc_id
-  cuda_visible_devices: '0'
+  cuda_visible_devices: '1'
   top_k: 10
 
   text_retrieval:
@@ -33,7 +33,7 @@ retrieval:
     image_question_key: question
 
 mdoc_agent:
-  cuda_visible_devices: '0'
+  cuda_visible_devices: '1'
   truncate_len: null
   save_freq: 1
   ans_key: ans_${run-name}

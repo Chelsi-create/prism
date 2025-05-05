@@ -13,12 +13,14 @@ from tqdm import tqdm
 @hydra.main(config_path="../config", config_name="base", version_base="1.2")
 def main(cfg):
     os.environ["CUDA_VISIBLE_DEVICES"] = cfg.retrieval.cuda_visible_devices
+    print(cfg.retrieval.cuda_visible_devices)
     print(torch.cuda.device_count())
     print("CUDA Available:", torch.cuda.is_available())
     print("CUDA Device Count:", torch.cuda.device_count())
-    print("Current Device:", torch.cuda.current_device())
     print("Device Name:", torch.cuda.get_device_name(0))
+    # torch.cuda.set_device(1)
 
+    print(os.environ["CUDA_VISIBLE_DEVICES"])
 
         # ============ Expand agent and model configs ============
     for agent_config in cfg.mdoc_agent.agents:

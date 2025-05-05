@@ -32,11 +32,10 @@ retrieval:
     image_question_key: question
 
   doc_key: doc_id
-  cuda_visible_devices: '0'
+  cuda_visible_devices: '1
   text_question_key: question
   r_text_index_key: text-index-path-${retrieval.text_question_key}
   top_k: 10
-  doc_key: doc_id
   image_question_key: question
   mix_question_key: question_node
   r_text_key: text-top-${retrieval.top_k}-${retrieval.text_question_key}
